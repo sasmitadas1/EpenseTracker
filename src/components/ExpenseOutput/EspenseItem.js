@@ -33,8 +33,7 @@ function EspenseItem({ id,description, amount, date }) {
               name="currency-inr"
               size="14"
               color="black"
-            />
-            {amount.toFixed()}
+            /> {!isNaN(Number(amount)) ? Number(amount).toFixed(2) : "0.00"}
           </Text>
         </View>
       </View>

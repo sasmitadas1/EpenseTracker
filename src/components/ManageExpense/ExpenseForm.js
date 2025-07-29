@@ -13,7 +13,10 @@ function ExpenseForm({ onCancel, submitButtonLabel, onSubmit, defaultValues }) {
       isValid: true,
     },
     date: {
-      value: defaultValues ? getFormatedDate(defaultValues.date) : "",
+      value:
+        defaultValues && defaultValues.date
+          ? getFormatedDate(defaultValues.date)
+          : "",
       isValid: true,
     },
     description: {
@@ -21,6 +24,7 @@ function ExpenseForm({ onCancel, submitButtonLabel, onSubmit, defaultValues }) {
       isValid: true,
     },
   });
+
   //   function InputChangeHandler(inputIdentifier, enteredValue) {
   //     setInputValue((currInputValue) => {
   //       return { ...currInputValue, [inputIdentifier]: enteredValue };
@@ -38,25 +42,17 @@ function ExpenseForm({ onCancel, submitButtonLabel, onSubmit, defaultValues }) {
       });
     };
   }
-  //   console.log("inputValue.....>>>", inputValue);
 
-  function isValidDateString(dateString) {
-    const regex = /^\d{4}-\d{2}-\d{2}$/;
-
-    if (!regex.test(dateString)) return false;
-
-    const date = new Date(dateString);
-    return date instanceof Date && !isNaN(date);
-  }
 
   function submitHandler() {
-    const amount = +inputValue.amount.value;
-    const date = inputValue.date.value;
-    const description = inputValue.description.value;
-
-    const amountIsValid = !isNaN(amount) && amount > 0;
-    const dateIsValid = isValidDateString(date);
-    const descriptionIsValid = description.trim().length > 0;
+    const expenseData = {
+      amount: +inputValue.amount.value,
+      date: new Date(inputValue.date.value),
+      description: inputValue.description.value,
+    };
+    const amountIsValid = !isNaN(expenseData.amount) && expenseData.amount > 0;
+    const dateIsValid = expenseData.date.toString() !== 'Invalid Date';
+    const descriptionIsValid = expenseData.description.trim().length > 0;
 
     if (!amountIsValid || !dateIsValid || !descriptionIsValid) {
       // Alert.alert("Invalid input, Please check your input values ");
@@ -73,11 +69,7 @@ function ExpenseForm({ onCancel, submitButtonLabel, onSubmit, defaultValues }) {
       });
       return;
     }
-    const expenseData = {
-      amount,
-      date: new Date(date),
-      description,
-    };
+   
     onSubmit(expenseData);
   }
   const formIsInvalid =

@@ -1,12 +1,16 @@
-import { useContext, useLayoutEffect } from "react";
+import { useContext, useLayoutEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import IconButton from "../components/UI/IconButton";
 import { GlobalStyles } from "../constants/styles";
 import Button from "../components/UI/Button";
 import { ExpensesContext } from "../../store/Expenses-context";
 import ExpenseForm from "../components/ManageExpense/ExpenseForm";
+import { deleteExpenses, storeExpenses, updateExpenses } from "../utility/http";
+import Loader from "../components/UI/Loader";
 
 function ManageExpenses({ route, navigation }) {
+  const [isloading, setIsLoading] = useState(false);
+
   const expenseCtx = useContext(ExpensesContext);
 
   const editExpenseId = route?.params?.expenseId;
@@ -22,25 +26,41 @@ function ManageExpenses({ route, navigation }) {
     navigation.goBack();
   }
 
-  function deleteExpenseHandler() {
-    expenseCtx.deleteExpense(editExpenseId);
-    navigation.goBack();
+  async function deleteExpenseHandler() {
+    setIsLoading(true);
+
+    try {
+      await deleteExpenses(editExpenseId);
+      expenseCtx.deleteExpense(editExpenseId);
+      navigation.goBack();
+    } catch (error) {
+      Alert.alert("Network Error", "Failed to delete the expense.");
+    }
   }
 
   const selectedExpense = expenseCtx.expenses.find(
     (expense) => expense.id === editExpenseId
   );
-  console.log(selectedExpense);
 
-  function confirmHandler(expesnseData) {
+  async function confirmHandler(expesnseData) {
+    setIsLoading(true);
     if (isEditing) {
       expenseCtx.updateExpense(editExpenseId, expesnseData);
+      await updateExpenses(editExpenseId, expesnseData);
     } else {
-      expenseCtx.addExpense(expesnseData);
+      try {
+        const id = await storeExpenses(expesnseData);
+        expenseCtx.addExpense({ ...expesnseData, id });
+      } catch (error) {
+        Alert.alert("Network Error", "Failed to store the expense.");
+        return;
+      }
     }
     navigation.goBack();
   }
-
+  if (isloading) {
+    return <Loader />;
+  }
   return (
     <View style={styles.container}>
       <ExpenseForm
