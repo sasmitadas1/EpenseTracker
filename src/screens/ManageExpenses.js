@@ -4,6 +4,7 @@ import IconButton from "../components/UI/IconButton";
 import { GlobalStyles } from "../constants/styles";
 import Button from "../components/UI/Button";
 import { ExpensesContext } from "../../store/Expenses-context";
+import ExpenseForm from "../components/ManageExpense/ExpenseForm";
 
 function ManageExpenses({ route, navigation }) {
   const expenseCtx = useContext(ExpensesContext);
@@ -26,33 +27,29 @@ function ManageExpenses({ route, navigation }) {
     navigation.goBack();
   }
 
-  function confirmHandler() {
+  const selectedExpense = expenseCtx.expenses.find(
+    (expense) => expense.id === editExpenseId
+  );
+  console.log(selectedExpense);
+
+  function confirmHandler(expesnseData) {
     if (isEditing) {
-      expenseCtx.updateExpense(editExpenseId, {
-        description: "Update Test",
-        amount: 500,
-        date: new Date("18-07-2025"),
-      });
+      expenseCtx.updateExpense(editExpenseId, expesnseData);
     } else {
-      expenseCtx.addExpense({
-        description: "Test",
-        amount: 300,
-        date: new Date("20-07-2025"),
-      });
+      expenseCtx.addExpense(expesnseData);
     }
     navigation.goBack();
   }
 
   return (
     <View style={styles.container}>
-      <View style={styles.buttons}>
-        <Button style={styles.button} mode="flat" onPress={cancelHandler}>
-          Cancel
-        </Button>
-        <Button style={styles.button} onPress={confirmHandler}>
-          {isEditing ? "Update" : "Add"}
-        </Button>
-      </View>
+      <ExpenseForm
+        onCancel={cancelHandler}
+        submitButtonLabel={isEditing ? "Update" : "Add"}
+        onSubmit={confirmHandler}
+        defaultValues={selectedExpense}
+      />
+
       {isEditing && (
         <View style={styles.deleteContainer}>
           <IconButton
@@ -72,15 +69,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,
-  },
-  buttons: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  button: {
-    minWidth: 120,
-    marginHorizontal: 8,
   },
   deleteContainer: {
     marginTop: 16,

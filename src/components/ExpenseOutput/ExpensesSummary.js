@@ -1,6 +1,6 @@
 import { StyleSheet, Text } from "react-native";
 import { View } from "react-native";
-import { GlobalStyles } from "../constants/styles";
+import { GlobalStyles } from "../../constants/styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 function ExpensesSummary({ expenses, periodName }) {

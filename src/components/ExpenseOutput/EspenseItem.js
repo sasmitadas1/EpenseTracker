@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import { Pressable } from "react-native";
-import { GlobalStyles } from "../constants/styles";
-import { getFormatedDate } from "../utility/date";
+import { GlobalStyles } from "../../constants/styles";
+import { getFormatedDate } from "../../utility/date";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
