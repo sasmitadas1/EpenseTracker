@@ -16,7 +16,7 @@ export async function storeExpenses(expenseData) {
     throw error; // So you can handle it in the calling function
   }
 }
-export async function fetchExpenses(expenseData) {
+export async function fetchExpenses() {
   try {
     const response = await axios.get(BACKEND_URL + "/expenses.json");
     const expenses = [];

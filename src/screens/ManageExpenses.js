@@ -10,6 +10,7 @@ import Loader from "../components/UI/Loader";
 
 function ManageExpenses({ route, navigation }) {
   const [isloading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
 
   const expenseCtx = useContext(ExpensesContext);
 
@@ -52,14 +53,16 @@ function ManageExpenses({ route, navigation }) {
         const id = await storeExpenses(expesnseData);
         expenseCtx.addExpense({ ...expesnseData, id });
       } catch (error) {
-        Alert.alert("Network Error", "Failed to store the expense.");
-        return;
+        setError("could not Add expenses!");
       }
     }
     navigation.goBack();
   }
   if (isloading) {
     return <Loader />;
+  }
+  if (error && !isloading) {
+    return <Error message={error} />;
   }
   return (
     <View style={styles.container}>
